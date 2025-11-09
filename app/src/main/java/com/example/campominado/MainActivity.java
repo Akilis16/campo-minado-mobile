@@ -1,6 +1,7 @@
 package com.example.campominado;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,6 +12,7 @@ import android.widget.TableRow;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -40,11 +42,12 @@ public class MainActivity extends AppCompatActivity {
         tableLayout = findViewById(R.id.table_layout);
 
         // criando os botões
-        campoMinado = new CampoMinado();  // lógica
-        criarCampoMinado();          // interface
+        campoMinado = new CampoMinado();  //
+        criarCampoMinado();          //
     }
 
     private void criarCampoMinado() {
+        Typeface jerseyFont = ResourcesCompat.getFont(this, R.font.jersey_10);
         int btnId = 0;
         for (int row = 0; row < CampoMinado.totalRow(); row++) {
             TableRow tableRow = new TableRow(this);
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
             for (int col = 0; col < CampoMinado.totalColumn(); col++) {
                 Button btn = (Button) inflater.inflate(R.layout.btn_template, tableRow, false);
                 btn.setId(btnId);
+                btn.setTypeface(jerseyFont);
                 tableRow.addView(btn);
                 // definindo um listener para o botão
                 btn.setOnClickListener(view -> {
@@ -63,31 +67,15 @@ public class MainActivity extends AppCompatActivity {
             }
             tableLayout.addView(tableRow);
         }
-//        sync();
     }
-
-    // sincronização: correspondência -- views vs classe Botoes
-//    private void sync() {
-//        for (int id = 0; id < btnMap.size(); id++) {
-//            Button btn = btnMap.get(id);
-//
-////            if (campoMinado.aceso(id)) {
-////                btn.setBackgroundColor(Color.parseColor(COR_SELECT));
-////            } else {
-////                btn.setBackgroundColor(Color.parseColor(COR_UNSELECT));
-////            }
-//        }
-//    }
 
     /************************************
      INTERAÇÃO COM O USUÁRIO: CLICKS
      ************************************/
 
-    // Para alterar a cor do quadradinho (clicar no botão)
-    private void onClickBtn(View v) {
-        int id = v.getId();
+    private void onClickBtn(View v) {// Captura clique da Celula
+        int id = v.getId();                     // Pega ID do elemento clicado
         campoMinado.click(id, btnMap.get(id));
-//        sync();
     }
 
     // Para o botão INVERTER
