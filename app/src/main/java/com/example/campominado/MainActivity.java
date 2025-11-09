@@ -23,8 +23,8 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     private BoardView boardView;
-    private CampoMinado campoMinado;
-    private LayoutInflater inflater;
+//    private CampoMinado campoMinado;
+//    private LayoutInflater inflater;
 //    private TableLayout tableLayout;
     private final HashMap<Integer, Button> btnMap = new HashMap<>();
 
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        inflater = LayoutInflater.from(this);
+//        inflater = LayoutInflater.from(this);
 //        tableLayout = findViewById(R.id.table_layout);
         boardView = findViewById(R.id.board_view);
 
@@ -76,20 +76,20 @@ public class MainActivity extends AppCompatActivity {
      INTERAÇÃO COM O USUÁRIO: CLICKS
      ************************************/
 
-    private void onClickBtn(View v) {// Captura clique da Celula
-        int id = v.getId();                     // Pega ID do elemento clicado
-        campoMinado.click(id, btnMap.get(id));
-    }
+//    private void onClickBtn(View v) {// Captura clique da Celula
+//        int id = v.getId();                     // Pega ID do elemento clicado
+//        campoMinado.click(id, btnMap.get(id));
+//    }
 
     // Para o botão INVERTER
     public void onClickInverter(View v) {
 //        campoMinado.inverter();
 //        sync();
+        boardView.invalidate();
     }
 
     // Para o botão RESET
     public void onClickReset(View v) {
-        campoMinado.reset();
-//        sync();
+        boardView.resetGame();
     }
 }

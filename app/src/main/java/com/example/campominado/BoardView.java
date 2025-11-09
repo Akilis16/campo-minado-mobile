@@ -15,7 +15,12 @@ public class BoardView extends View {
 
     private CampoMinado campoMinado;
 
-    private final Paint  paintOpen = new Paint(), paintClose = new Paint(), paintBomb = new Paint(), paintText = new Paint();
+    private final Paint
+            paintOpen = new Paint(Paint.ANTI_ALIAS_FLAG),
+            paintClose = new Paint(Paint.ANTI_ALIAS_FLAG),
+            paintBomb = new Paint(Paint.ANTI_ALIAS_FLAG),
+            paintText = new Paint(Paint.ANTI_ALIAS_FLAG),
+            paintGrid = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     public BoardView(Context context) {
         super(context);
@@ -32,24 +37,28 @@ public class BoardView extends View {
         inicializador();
     }
     private void inicializador(){
-        campoMinado = new CampoMinado();
+        this.campoMinado = new CampoMinado();
 
-        paintClose.setStyle(Paint.Style.FILL);
-        paintOpen.setStyle(Paint.Style.FILL);
-        paintBomb.setStyle(Paint.Style.FILL);
-        paintText.setStyle(Paint.Style.FILL);
+        this.paintClose.setStyle(Paint.Style.FILL);
+        this.paintOpen.setStyle(Paint.Style.FILL);
+        this.paintBomb.setStyle(Paint.Style.FILL);
+        this.paintText.setStyle(Paint.Style.FILL);
+        this.paintGrid.setStyle(Paint.Style.STROKE);
 
-        paintClose.setColor(Color.parseColor("#44000000"));
-        paintOpen.setColor(Color.parseColor("#FFC107"));
-        paintBomb.setColor(Color.parseColor("#FF0000"));
-        paintText.setColor(Color.BLACK);
+        this.paintClose.setColor(Color.parseColor("#666666"));
+        this.paintOpen.setColor(Color.parseColor("#FFC107"));
+        this.paintBomb.setColor(Color.parseColor("#FF0000"));
+        this.paintText.setColor(Color.BLACK);
 
-        paintText.setTextAlign(Paint.Align.CENTER);
+        this.paintText.setTextAlign(Paint.Align.CENTER);
+        this.paintGrid.setStrokeWidth(5f);
+        this.paintGrid.setColor(Color.WHITE);
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+
         float height, width;
 
         if(h > w){
@@ -60,36 +69,46 @@ public class BoardView extends View {
             width = (float) (h * 0.70);
         }
 
-        this.cellWidth =  width / (float)(CampoMinado.totalColumn());
-        this.cellHeight =  height / (float)(CampoMinado.totalRow());
+        this.cellWidth =  w / (float)(this.campoMinado.totalColumn());
+        this.cellHeight =  h / (float)(this.campoMinado.totalRow());
 
-        paintText.setTextSize((Math.min(cellHeight, cellWidth) * 0.6f));
+        this.paintText.setTextSize((Math.min(this.cellHeight, this.cellWidth) * 0.6f));
     }
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
 
+        canvas.drawColor(Color.DKGRAY);
+
         for(int row = 0; row < CampoMinado.totalRow(); row++){
             for(int col = 0; col < CampoMinado.totalColumn(); col++){
 
-                Cell cell = campoMinado.getCellByCoords(row, col);
+                Cell cell = this.campoMinado.getCellByCoords(row, col);
 
-                float left = col * cellWidth;
-                float top = row * cellHeight;
-                float right = left + cellWidth;
-                float bottom = top + cellHeight;
+                float left = col * this.cellWidth;
+                float top = row * this.cellHeight;
+                float right = left + this.cellWidth;
+                float bottom = top + this.cellHeight;
 
                 if(cell.isOpen()){
                     if(cell.isHasBomb()){
-                        canvas.drawRect(left, top, right, bottom, paintBomb);
+                        canvas.drawRect(left, top, right, bottom, this.paintBomb);
                     }else{
-                        canvas.drawRect(left, top, right, bottom, paintOpen);
+                        canvas.drawRect(left, top, right, bottom, this.paintOpen);
                     }
                 } else {
-                    canvas.drawRect(left, top, right, bottom, paintClose);
+                    canvas.drawRect(left, top, right, bottom, this.paintClose);
                 }
+
+                canvas.drawRect(left, top, right, bottom, this.paintGrid);
+
             }
         }
+    }
+
+    public void resetGame() {
+        this.campoMinado.reset();
+        invalidate(); // redesenha o tabuleiro
     }
 }
