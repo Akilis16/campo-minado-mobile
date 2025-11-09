@@ -4,13 +4,13 @@ import android.widget.Button;
 
 import java.util.HashMap;
 
-public class Botoes {
+public class CampoMinado {
 
     public static final int NUM_LINHAS = 10;
     public static final int NUM_COLUNAS = 10;
     private final boolean[] arrayQuads = new boolean[NUM_COLUNAS * NUM_LINHAS];
 
-    public Botoes() {
+    public CampoMinado() {
         // inicializa os botões
         reset();
     }

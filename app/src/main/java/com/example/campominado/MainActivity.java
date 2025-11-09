@@ -19,7 +19,7 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Botoes botoes;
+    private CampoMinado campoMinado;
     private final String COR_SELECT = "#FFC107";
     private final String COR_UNSELECT = "#44000000";
     private LayoutInflater inflater;
@@ -41,16 +41,16 @@ public class MainActivity extends AppCompatActivity {
         tableLayout = findViewById(R.id.table_layout);
 
         // criando os botões
-        botoes = new Botoes();  // lógica
-        criarBotoes();          // interface
+        campoMinado = new CampoMinado();  // lógica
+        criarCampoMinado();          // interface
     }
 
-    private void criarBotoes() {
+    private void criarCampoMinado() {
         int btnId = 0;
-        for (int lin = 0; lin < Botoes.NUM_LINHAS; lin++) {
+        for (int lin = 0; lin < CampoMinado.NUM_LINHAS; lin++) {
             TableRow tableRow = new TableRow(this);
 
-            for (int col = 0; col < Botoes.NUM_COLUNAS; col++) {
+            for (int col = 0; col < CampoMinado.NUM_COLUNAS; col++) {
                 Button btn = (Button) inflater.inflate(R.layout.btn_template,
                         tableRow, false);
                 btn.setId(btnId);
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private void sync() {
         for (int id = 0; id < btnMap.size(); id++) {
             Button btn = btnMap.get(id);
-            if (botoes.aceso(id)) {
+            if (campoMinado.aceso(id)) {
                 btn.setBackgroundColor(Color.parseColor(COR_SELECT));
             } else {
                 btn.setBackgroundColor(Color.parseColor(COR_UNSELECT));
@@ -87,19 +87,19 @@ public class MainActivity extends AppCompatActivity {
     // Para alterar a cor do quadradinho (clicar no botão)
     private void onClickBtn(View v) {
         int id = v.getId();
-        botoes.click(id);
+        campoMinado.click(id);
         sync();
     }
 
     // Para o botão INVERTER
     public void onClickInverter(View v) {
-        botoes.inverter();
+        campoMinado.inverter();
         sync();
     }
 
     // Para o botão RESET
     public void onClickReset(View v) {
-        botoes.reset();
+        campoMinado.reset();
         sync();
     }
 }
