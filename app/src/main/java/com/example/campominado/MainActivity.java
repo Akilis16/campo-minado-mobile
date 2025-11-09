@@ -22,9 +22,10 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+    private BoardView boardView;
     private CampoMinado campoMinado;
     private LayoutInflater inflater;
-    private TableLayout tableLayout;
+//    private TableLayout tableLayout;
     private final HashMap<Integer, Button> btnMap = new HashMap<>();
 
     @Override
@@ -39,13 +40,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         inflater = LayoutInflater.from(this);
-        tableLayout = findViewById(R.id.table_layout);
+//        tableLayout = findViewById(R.id.table_layout);
+        boardView = findViewById(R.id.board_view);
 
         // criando os botões
-        campoMinado = new CampoMinado();  //
-        criarCampoMinado();          //
+//        campoMinado = new CampoMinado();  //
+//        criarCampoMinado();          //
     }
 
+    /*
     private void criarCampoMinado() {
         Typeface jerseyFont = ResourcesCompat.getFont(this, R.font.jersey_10);
         int btnId = 0;
@@ -68,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             tableLayout.addView(tableRow);
         }
     }
-
+    */
     /************************************
      INTERAÇÃO COM O USUÁRIO: CLICKS
      ************************************/

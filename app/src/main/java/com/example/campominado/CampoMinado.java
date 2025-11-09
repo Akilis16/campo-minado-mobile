@@ -14,7 +14,7 @@ public class CampoMinado {
 
     private final String COR_SELECT = "#FFC107", COR_BOMB = "#ff0000", COR_UNSELECT = "#44000000";
     private static final int NUM_LINHAS = 10, NUM_COLUNAS = 10;
-    private final Cell[][] listCell = new Cell[NUM_LINHAS][NUM_COLUNAS]; // Tabuleiro do Campo Minado
+    private static final Cell[][] listCell = new Cell[NUM_LINHAS][NUM_COLUNAS]; // Tabuleiro do Campo Minado
     private final Map<Integer, Cell> cellMap = new HashMap<>(); //Mapeia as Celular por ID
 
     public CampoMinado() {
@@ -59,7 +59,7 @@ public class CampoMinado {
         return cellMap.get(id);
     }
 
-    public Cell getCellByCoords(int row, int col){
+    public static Cell getCellByCoords(int row, int col){
         return listCell[row][col];
     }
 

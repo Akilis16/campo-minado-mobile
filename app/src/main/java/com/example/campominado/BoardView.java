@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.AttributeSet;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -18,7 +19,19 @@ public class BoardView extends View {
 
     public BoardView(Context context) {
         super(context);
+        inicializador();
+    }
 
+    public BoardView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        inicializador();
+    }
+
+    public BoardView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        inicializador();
+    }
+    private void inicializador(){
         campoMinado = new CampoMinado();
 
         paintClose.setStyle(Paint.Style.FILL);
