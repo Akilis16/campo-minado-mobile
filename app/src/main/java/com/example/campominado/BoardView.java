@@ -97,7 +97,7 @@ public class BoardView extends View {
                         canvas.drawRect(left, top, right, bottom, this.paintBomb);
                     }else{
                         canvas.drawRect(left, top, right, bottom, this.paintOpen);
-
+                    /*
                         int bombsAround = 0;
 
                         for(int r = -1; r < 2; r++){
@@ -112,11 +112,13 @@ public class BoardView extends View {
 
                                 if(this.campoMinado.getCellByCoords(rowCheck, colCheck).isHasBomb()){
                                     bombsAround++;
+
                                 }
                             }
                         }
 
                         this.campoMinado.getCellByCoords(row, col).setBombsAround(bombsAround);
+                    */
                     }
                 } else {
                     canvas.drawRect(left, top, right, bottom, this.paintClose);
@@ -154,12 +156,13 @@ public class BoardView extends View {
                 int row = (int) Math.floor(y / this.cellHeight);
                 int col = (int) Math.floor(x / this.cellWidth);
 
-                if(row >= 0 && col >=0 && row < CampoMinado.totalRow() && col < CampoMinado.totalColumn()){
-                    Cell cell = this.campoMinado.getCellByCoords(row, col);
-                    if(cell != null){
-                        cell.setOpen();
-                        invalidate();
-                    }
+                if(row >= 0 && col >=0 && row < CampoMinado.totalRow() && col < CampoMinado.totalColumn()) {
+//                    Cell cell = this.campoMinado.getCellByCoords(row, col);
+//                    if(cell != null){
+//                        cell.setOpen();
+                    this.campoMinado.openCell(row, col);
+                    invalidate();
+//                }
                 }
                 return true;
         }

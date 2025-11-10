@@ -2,7 +2,7 @@ package com.example.campominado;
 
 public class Cell {
     private int id, row, column, bombsAround;
-    private boolean hasBomb, open;
+    private boolean hasBomb, open, search;
 
     public Cell(int id, int row, int column, boolean hasBomb){
         this.id = id;
@@ -10,7 +10,16 @@ public class Cell {
         this.column = column;
         this.hasBomb = hasBomb;
         this.open = false;
+        this.search = false;
         this.bombsAround = 0;
+    }
+
+    public void setSearch(){
+        this.search = true;
+    }
+
+    public boolean isSearch() {
+        return search;
     }
 
     public boolean isHasBomb(){ // Retorna se tem bomba
@@ -23,6 +32,7 @@ public class Cell {
 
     public void setOpen(){      // Abre a Celula
         this.open = true;
+        this.search = true;
     }
 
     public int getBombsAround(){

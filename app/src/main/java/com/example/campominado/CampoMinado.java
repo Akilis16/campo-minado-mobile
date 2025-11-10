@@ -24,6 +24,52 @@ public class CampoMinado {
         }
     }
 
+    public void openCell(int row, int col){
+        if(row < 0 || col < 0 || row >= totalRow() || col >= totalColumn() || this.getCellByCoords(row, col).isSearch()) return;
+
+        this.getCellByCoords(row, col).setOpen();
+
+        int bombsAround = findAroundCell(row, col);
+
+        if(bombsAround != 0){
+            this.getCellByCoords(row, col).setBombsAround(bombsAround);
+        }else{
+            for(int r = -1; r < 2; r++){
+                for(int c = -1; c < 2; c++){
+                    if(r == 0 && c == 0) continue;
+
+                    int rowCheck = row + r;
+                    int colCheck = col + c;
+
+                    if(rowCheck < 0 || colCheck < 0 || rowCheck >= totalRow() || colCheck >= totalColumn())
+                        continue;;
+
+                    openCell(rowCheck, colCheck);
+                }
+            }
+        }
+    }
+
+    private int findAroundCell(int row, int col){
+        int bombsAround = 0;
+        for(int r = -1; r < 2; r++){
+            for(int c = -1; c < 2; c++){
+                if(r == 0 && c == 0) continue;
+
+                int rowCheck = row + r;
+                int colCheck = col + c;
+
+                if(rowCheck < 0 || colCheck < 0 || rowCheck >= CampoMinado.totalRow() || colCheck >= CampoMinado.totalColumn())
+                    continue;;
+
+                if(this.getCellByCoords(rowCheck, colCheck).isHasBomb()){
+                    bombsAround++;
+                }
+            }
+        }
+        return bombsAround;
+    }
+
     private Cell getCellById(int id){   //Busca Celula pelo ID
         if(id < 0 || id >= (NUM_LINHAS * NUM_COLUNAS)) return null; //Valida se o ID existe
         return cellMap.get(id);
