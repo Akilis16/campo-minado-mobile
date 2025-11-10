@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -69,8 +70,8 @@ public class BoardView extends View {
             width = (float) (h * 0.70);
         }
 
-        this.cellWidth =  w / (float)(this.campoMinado.totalColumn());
-        this.cellHeight =  h / (float)(this.campoMinado.totalRow());
+        this.cellWidth =  w / (float)(CampoMinado.totalColumn());
+        this.cellHeight =  h / (float)(CampoMinado.totalRow());
 
         this.paintText.setTextSize((Math.min(this.cellHeight, this.cellWidth) * 0.6f));
     }
@@ -96,15 +97,74 @@ public class BoardView extends View {
                         canvas.drawRect(left, top, right, bottom, this.paintBomb);
                     }else{
                         canvas.drawRect(left, top, right, bottom, this.paintOpen);
+
+                        int bombsAround = 0;
+
+                        for(int r = -1; r < 2; r++){
+                            for(int c = -1; c < 2; c++){
+                                if(r == 0 && c == 0) continue;
+
+                                int rowCheck = row + r;
+                                int colCheck = col + c;
+
+                                if(rowCheck < 0 || colCheck < 0 || rowCheck >= CampoMinado.totalRow() || colCheck >= CampoMinado.totalColumn())
+                                    continue;;
+
+                                if(this.campoMinado.getCellByCoords(rowCheck, colCheck).isHasBomb()){
+                                    bombsAround++;
+                                }
+                            }
+                        }
+
+                        this.campoMinado.getCellByCoords(row, col).setBombsAround(bombsAround);
                     }
                 } else {
                     canvas.drawRect(left, top, right, bottom, this.paintClose);
                 }
 
-                canvas.drawRect(left, top, right, bottom, this.paintGrid);
+                float centerX = left + this.cellWidth / 2f;
+                float centerY = top + this.cellHeight / 2f - ((paintText.descent() + paintText.ascent()) / 2f);
 
+                if(this.campoMinado.getCellByCoords(row, col).getBombsAround() != 0){
+                    canvas.drawText(
+                            String.valueOf(this.campoMinado.getCellByCoords(row, col).getBombsAround()),
+                            centerX,
+                            centerY,
+                            this.paintText
+                    );
+                }else{
+                    canvas.drawText(
+                            "",
+                            centerX,
+                            centerY,
+                            this.paintText
+                    );
+                }
+                canvas.drawRect(left, top, right, bottom, this.paintGrid);
             }
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                float x = event.getX(), y = event.getY();
+
+                int row = (int) Math.floor(y / this.cellHeight);
+                int col = (int) Math.floor(x / this.cellWidth);
+
+                if(row >= 0 && col >=0 && row < CampoMinado.totalRow() && col < CampoMinado.totalColumn()){
+                    Cell cell = this.campoMinado.getCellByCoords(row, col);
+                    if(cell != null){
+                        cell.setOpen();
+                        invalidate();
+                    }
+                }
+                return true;
+        }
+
+        return super.onTouchEvent(event);
     }
 
     public void resetGame() {
