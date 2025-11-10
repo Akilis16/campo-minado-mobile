@@ -25,15 +25,20 @@ public class CampoMinado {
     }
 
     public void openCell(int row, int col){
-        if(row < 0 || col < 0 || row >= totalRow() || col >= totalColumn() || this.getCellByCoords(row, col).isSearch()) return;
+        if(row < 0 || col < 0 || row >= totalRow() || col >= totalColumn()) return;
+
+        Cell cell = this.getCellByCoords(row, col);
+
+        if(cell.isOpen()) return;
 
         this.getCellByCoords(row, col).setOpen();
 
-        int bombsAround = findAroundCell(row, col);
+        if(cell.isHasBomb()) return;
 
-        if(bombsAround != 0){
-            this.getCellByCoords(row, col).setBombsAround(bombsAround);
-        }else{
+        int bombsAround = countBombsAround(row, col);
+        this.getCellByCoords(row, col).setBombsAround(bombsAround);
+
+        if(bombsAround == 0){
             for(int r = -1; r < 2; r++){
                 for(int c = -1; c < 2; c++){
                     if(r == 0 && c == 0) continue;
@@ -50,7 +55,7 @@ public class CampoMinado {
         }
     }
 
-    private int findAroundCell(int row, int col){
+    private int countBombsAround(int row, int col){
         int bombsAround = 0;
         for(int r = -1; r < 2; r++){
             for(int c = -1; c < 2; c++){
