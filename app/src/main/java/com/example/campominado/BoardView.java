@@ -19,6 +19,7 @@ public class BoardView extends View {
     private final Paint
             paintOpen = new Paint(Paint.ANTI_ALIAS_FLAG),
             paintClose = new Paint(Paint.ANTI_ALIAS_FLAG),
+            paintMark = new Paint(Paint.ANTI_ALIAS_FLAG),
             paintBomb = new Paint(Paint.ANTI_ALIAS_FLAG),
             paintText = new Paint(Paint.ANTI_ALIAS_FLAG),
             paintGrid = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -41,18 +42,19 @@ public class BoardView extends View {
         this.campoMinado = new CampoMinado();
 
         this.paintClose.setStyle(Paint.Style.FILL);
+        this.paintMark.setStyle(Paint.Style.FILL);
         this.paintOpen.setStyle(Paint.Style.FILL);
         this.paintBomb.setStyle(Paint.Style.FILL);
         this.paintText.setStyle(Paint.Style.FILL);
         this.paintGrid.setStyle(Paint.Style.STROKE);
 
-        this.paintClose.setColor(Color.parseColor("#666666"));
+        this.paintClose.setColor(Color.parseColor("#C0B5B4"));
         this.paintOpen.setColor(Color.parseColor("#FFC107"));
         this.paintBomb.setColor(Color.parseColor("#FF0000"));
         this.paintText.setColor(Color.BLACK);
 
         this.paintText.setTextAlign(Paint.Align.CENTER);
-        this.paintGrid.setStrokeWidth(5f);
+        this.paintGrid.setStrokeWidth(8.4f);
         this.paintGrid.setColor(Color.WHITE);
     }
 
@@ -60,15 +62,15 @@ public class BoardView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
-        float height, width;
-
-        if(h > w){
-            height = (float) (h * 0.80);
-            width = (float) (h * 0.95);
-        }else{
-            height = (float) (h * 0.95);
-            width = (float) (h * 0.70);
-        }
+//        float height, width;
+//
+//        if(h > w){
+//            height = (float) (h * 0.80);
+//            width = (float) (h * 0.95);
+//        }else{
+//            height = (float) (h * 0.95);
+//            width = (float) (h * 0.70);
+//        }
 
         this.cellWidth =  w / (float)(CampoMinado.totalColumn());
         this.cellHeight =  h / (float)(CampoMinado.totalRow());
@@ -97,28 +99,6 @@ public class BoardView extends View {
                         canvas.drawRect(left, top, right, bottom, this.paintBomb);
                     }else{
                         canvas.drawRect(left, top, right, bottom, this.paintOpen);
-                    /*
-                        int bombsAround = 0;
-
-                        for(int r = -1; r < 2; r++){
-                            for(int c = -1; c < 2; c++){
-                                if(r == 0 && c == 0) continue;
-
-                                int rowCheck = row + r;
-                                int colCheck = col + c;
-
-                                if(rowCheck < 0 || colCheck < 0 || rowCheck >= CampoMinado.totalRow() || colCheck >= CampoMinado.totalColumn())
-                                    continue;;
-
-                                if(this.campoMinado.getCellByCoords(rowCheck, colCheck).isHasBomb()){
-                                    bombsAround++;
-
-                                }
-                            }
-                        }
-
-                        this.campoMinado.getCellByCoords(row, col).setBombsAround(bombsAround);
-                    */
                     }
                 } else {
                     canvas.drawRect(left, top, right, bottom, this.paintClose);

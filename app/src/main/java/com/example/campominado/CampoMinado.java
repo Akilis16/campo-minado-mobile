@@ -7,7 +7,8 @@ public class CampoMinado {
 
     private static final int NUM_LINHAS = 10, NUM_COLUNAS = 10;
     private final Cell[][] listCell = new Cell[NUM_LINHAS][NUM_COLUNAS]; // Tabuleiro do Campo Minado
-    private final Map<Integer, Cell> cellMap = new HashMap<>(); //Mapeia as Celular por ID
+//    private final Map<Integer, Cell> cellMap = new HashMap<>(); //Mapeia as Celular por ID
+    private int countAllCell = 0;
 
     public CampoMinado() {
         reset();// inicializa os botões
@@ -18,10 +19,33 @@ public class CampoMinado {
         for (int row = 0; row < totalRow(); row++) {
             for (int col = 0; col < totalColumn(); col++) {
                 listCell[row][col] = new Cell(id, row, col, generateBombRandow());
-                cellMap.put(id, listCell[row][col]);
+                countAllCell = listCell[row][col].isHasBomb() ? (countAllCell+1) : countAllCell;
+                //                cellMap.put(id, listCell[row][col]);
                 id++;
             }
         }
+    }
+
+    private void endGameWin(){
+        int count = 0;
+        for(int row = 0; row < totalRow(); row++){
+            for(int col = 0; col <totalColumn(); col++){
+                if(getCellByCoords(row, col).isOpen() && !getCellByCoords(row, col).isHasBomb()) count++;
+            }
+        }
+        if(this.countAllCell == count){
+            //DERROTA
+        }
+    }
+
+    private void endGameLose(){
+        for(int row = 0; row < totalRow(); row++){
+            for(int col = 0; col <totalColumn(); col++){
+                if(getCellByCoords(row, col).isHasBomb()) getCellByCoords(row, col).setOpen();
+            }
+        }
+
+        //DERROTA
     }
 
     public void openCell(int row, int col){
@@ -33,7 +57,10 @@ public class CampoMinado {
 
         this.getCellByCoords(row, col).setOpen();
 
-        if(cell.isHasBomb()) return;
+        if(cell.isHasBomb()) {
+            endGameLose();
+            return;
+        }
 
         int bombsAround = countBombsAround(row, col);
         this.getCellByCoords(row, col).setBombsAround(bombsAround);
@@ -75,10 +102,10 @@ public class CampoMinado {
         return bombsAround;
     }
 
-    private Cell getCellById(int id){   //Busca Celula pelo ID
-        if(id < 0 || id >= (NUM_LINHAS * NUM_COLUNAS)) return null; //Valida se o ID existe
-        return cellMap.get(id);
-    }
+//    private Cell getCellById(int id){   //Busca Celula pelo ID
+//        if(id < 0 || id >= (NUM_LINHAS * NUM_COLUNAS)) return null; //Valida se o ID existe
+//        return cellMap.get(id);
+//    }
 
     public Cell getCellByCoords(int row, int col){
         return listCell[row][col];

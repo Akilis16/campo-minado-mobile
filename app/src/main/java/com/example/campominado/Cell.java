@@ -2,7 +2,7 @@ package com.example.campominado;
 
 public class Cell {
     private int id, row, column, bombsAround;
-    private boolean hasBomb, open;
+    private boolean hasBomb, open, mark;
 
     public Cell(int id, int row, int column, boolean hasBomb){
         this.id = id;
@@ -10,7 +10,16 @@ public class Cell {
         this.column = column;
         this.hasBomb = hasBomb;
         this.open = false;
+        this.mark = false;
         this.bombsAround = 0;
+    }
+
+    public boolean isMark() {
+        return this.mark;
+    }
+
+    public void markBomb(){
+        this.mark = !this.mark;
     }
 
     public boolean isHasBomb(){ // Retorna se tem bomba
