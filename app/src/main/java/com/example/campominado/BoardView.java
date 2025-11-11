@@ -4,17 +4,21 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 
 public class BoardView extends View {
 
     private float cellWidth, cellHeight, offsetX = 0f, offsetY = 0f;
 
     private CampoMinado campoMinado;
+    private Drawable bombDrawable;
 
     private final Paint
             paintOpen = new Paint(Paint.ANTI_ALIAS_FLAG),
@@ -41,6 +45,8 @@ public class BoardView extends View {
     }
     private void inicializador(){
         this.campoMinado = new CampoMinado();
+
+        this.bombDrawable = AppCompatResources.getDrawable(getContext(), R.drawable.bomba_sem_fundo);
 
         this.paintClose.setStyle(Paint.Style.FILL);
         this.paintMark.setStyle(Paint.Style.FILL);
@@ -124,6 +130,33 @@ public class BoardView extends View {
                 if(cell.isOpen()){
                     if(cell.isHasBomb()){
                         canvas.drawRect(left, top, right, bottom, this.paintBomb);
+
+                        if(bombDrawable != null){
+                            float cellW = this.cellWidth, cellH = this.cellHeight;
+                            int bombW = bombDrawable.getIntrinsicWidth(), bombH = bombDrawable.getIntrinsicHeight();
+                            int imgL, imgR, imgT, imgB;
+
+                            if(bombH > 0 && bombW > 0) {
+                                float scale = 0.9f * Math.min(cellW / bombW, cellH / bombH);
+
+//                                float scaleW = (cellW / bombW) * 0.8F, scaleH = (cellH / bombH) * 0.8F;
+                                float drawW = bombW * scale, drawH = bombH * scale;
+                                float cx = (left + right) / 2F, cy = (top + bottom) / 2F;
+
+                                imgL = (int) (cx - drawW / 2F);
+                                imgR = (int) (cx + drawW / 2F);
+                                imgT = (int) (cy - drawH / 2F);
+                                imgB = (int) (cy + drawH / 2F);
+                            }else{
+                                imgL = (int) left;
+                                imgT = (int) top;
+                                imgR = (int) right;
+                                imgB = (int) bottom;
+                            }
+
+                            bombDrawable.setBounds(imgL, imgT, imgR, imgB);
+                            bombDrawable.draw(canvas);
+                        }
                     }else{
                         canvas.drawRect(left, top, right, bottom, this.paintOpen);
                     }
