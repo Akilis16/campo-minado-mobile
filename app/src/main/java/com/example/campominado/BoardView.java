@@ -94,19 +94,6 @@ public class BoardView extends View {
         this.offsetX = (w - boardWidth) / 2f;
         this.offsetY = (h - boardHeight) / 2f;
 
-//        float height, width;
-//
-//        if(h > w){
-//            height = (float) (h * 0.80);
-//            width = (float) (h * 0.95);
-//        }else{
-//            height = (float) (h * 0.95);
-//            width = (float) (h * 0.70);
-//        }
-
-//        this.cellWidth =  w / (float)(CampoMinado.totalColumn());
-//        this.cellHeight =  h / (float)(CampoMinado.totalRow());
-
         this.paintText.setTextSize((Math.min(this.cellHeight, this.cellWidth) * 0.6f));
         this.paintMessage.setTextSize(Math.min(w, h) * 0.15f);
     }
@@ -131,32 +118,7 @@ public class BoardView extends View {
                     if(cell.isHasBomb()){
                         canvas.drawRect(left, top, right, bottom, this.paintBomb);
 
-                        if(bombDrawable != null){
-                            float cellW = this.cellWidth, cellH = this.cellHeight;
-                            int bombW = bombDrawable.getIntrinsicWidth(), bombH = bombDrawable.getIntrinsicHeight();
-                            int imgL, imgR, imgT, imgB;
-
-                            if(bombH > 0 && bombW > 0) {
-                                float scale = 0.9f * Math.min(cellW / bombW, cellH / bombH);
-
-//                                float scaleW = (cellW / bombW) * 0.8F, scaleH = (cellH / bombH) * 0.8F;
-                                float drawW = bombW * scale, drawH = bombH * scale;
-                                float cx = (left + right) / 2F, cy = (top + bottom) / 2F;
-
-                                imgL = (int) (cx - drawW / 2F);
-                                imgR = (int) (cx + drawW / 2F);
-                                imgT = (int) (cy - drawH / 2F);
-                                imgB = (int) (cy + drawH / 2F);
-                            }else{
-                                imgL = (int) left;
-                                imgT = (int) top;
-                                imgR = (int) right;
-                                imgB = (int) bottom;
-                            }
-
-                            bombDrawable.setBounds(imgL, imgT, imgR, imgB);
-                            bombDrawable.draw(canvas);
-                        }
+                        designBomb(canvas, left, top, right, bottom);
                     }else{
                         canvas.drawRect(left, top, right, bottom, this.paintOpen);
                     }
@@ -165,29 +127,10 @@ public class BoardView extends View {
                 } else {
                     canvas.drawRect(left, top, right, bottom, this.paintClose);
                 }
-
-                float centerX = left + this.cellWidth / 2f;
-                float centerY = top + this.cellHeight / 2f - ((paintText.descent() + paintText.ascent()) / 2f);
-
-                if(this.campoMinado.getCellByCoords(row, col).getBombsAround() != 0){
-                    canvas.drawText(
-                            String.valueOf(this.campoMinado.getCellByCoords(row, col).getBombsAround()),
-                            centerX,
-                            centerY,
-                            this.paintText
-                    );
-                }else{
-                    canvas.drawText(
-                            "",
-                            centerX,
-                            centerY,
-                            this.paintText
-                    );
-                }
+                designText(canvas, left, top, row, col);
                 canvas.drawRect(left, top, right, bottom, this.paintGrid);
             }
         }
-
 
         if(this.campoMinado.isWin() || this.campoMinado.isLose()){
 
@@ -209,6 +152,49 @@ public class BoardView extends View {
 
             canvas.drawText(msg, cx, cy, paintMessage);
 
+        }
+    }
+
+    private void designBomb(Canvas canvas, float left, float top, float right, float bottom){
+        if(bombDrawable != null){
+            float cellW = this.cellWidth, cellH = this.cellHeight;
+            int bombW = bombDrawable.getIntrinsicWidth(), bombH = bombDrawable.getIntrinsicHeight();
+            int imgL, imgR, imgT, imgB;
+
+            if(bombH > 0 && bombW > 0) {
+                float scale = 0.9f * Math.min(cellW / bombW, cellH / bombH);
+
+//                                float scaleW = (cellW / bombW) * 0.8F, scaleH = (cellH / bombH) * 0.8F;
+                float drawW = bombW * scale, drawH = bombH * scale;
+                float cx = (left + right) / 2F, cy = (top + bottom) / 2F;
+
+                imgL = (int) (cx - drawW / 2F);
+                imgR = (int) (cx + drawW / 2F);
+                imgT = (int) (cy - drawH / 2F);
+                imgB = (int) (cy + drawH / 2F);
+            }else{
+                imgL = (int) left;
+                imgT = (int) top;
+                imgR = (int) right;
+                imgB = (int) bottom;
+            }
+
+            bombDrawable.setBounds(imgL, imgT, imgR, imgB);
+            bombDrawable.draw(canvas);
+        }
+    }
+
+    private void designText(Canvas canvas, float left, float top, int row, int col){
+        if(this.campoMinado.getCellByCoords(row, col).getBombsAround() != 0) {
+            float centerX = left + this.cellWidth / 2f;
+            float centerY = top + this.cellHeight / 2f - ((paintText.descent() + paintText.ascent()) / 2f);
+
+            canvas.drawText(
+                    String.valueOf(this.campoMinado.getCellByCoords(row, col).getBombsAround()),
+                    centerX,
+                    centerY,
+                    this.paintText
+            );
         }
     }
 
