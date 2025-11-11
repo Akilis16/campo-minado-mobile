@@ -132,6 +132,9 @@ public class BoardView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if(this.campoMinado.isLose())   return false;
+        if(this.campoMinado.isWin())    return false;
+
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 float x = event.getX(), y = event.getY();
