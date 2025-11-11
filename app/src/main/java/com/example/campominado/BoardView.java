@@ -22,6 +22,7 @@ public class BoardView extends View {
             paintMark = new Paint(Paint.ANTI_ALIAS_FLAG),
             paintBomb = new Paint(Paint.ANTI_ALIAS_FLAG),
             paintText = new Paint(Paint.ANTI_ALIAS_FLAG),
+            paintMessage = new Paint(Paint.ANTI_ALIAS_FLAG),
             paintGrid = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     public BoardView(Context context) {
@@ -57,6 +58,13 @@ public class BoardView extends View {
         this.paintText.setTextAlign(Paint.Align.CENTER);
         this.paintGrid.setStrokeWidth(8.4f);
         this.paintGrid.setColor(Color.WHITE);
+
+        paintMessage.setAntiAlias(true);
+        paintMessage.setTextAlign(Paint.Align.CENTER);
+        paintMessage.setTextSize(64f);                // ajusta depois se quiser maior/menor
+        paintMessage.setFakeBoldText(true);
+        paintMessage.setShadowLayer(8f, 0f, 0f, Color.BLACK);
+
     }
 
     @Override
@@ -77,6 +85,7 @@ public class BoardView extends View {
         this.cellHeight =  h / (float)(CampoMinado.totalRow());
 
         this.paintText.setTextSize((Math.min(this.cellHeight, this.cellWidth) * 0.6f));
+        this.paintMessage.setTextSize(Math.min(w, h) * 0.15f);
     }
 
     @Override
@@ -128,12 +137,37 @@ public class BoardView extends View {
                 canvas.drawRect(left, top, right, bottom, this.paintGrid);
             }
         }
+
+
+        if(this.campoMinado.isWin() || this.campoMinado.isLose()){
+
+            Paint paintFundo = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paintFundo.setColor(0xAA000000);
+            canvas.drawRect(0, 0,getWidth(), getHeight(), paintFundo);
+
+            String msg;
+            if(this.campoMinado.isWin()){
+                paintMessage.setColor(Color.CYAN);    // cor da mensagem
+                msg = "YOU WIN!";
+            } else {
+                paintMessage.setColor(Color.RED);
+                msg = "YOU LOSE!";
+            }
+
+            float cx = getWidth() / 2f;
+            float cy = getHeight() / 2f - ((paintMessage.descent() + paintMessage.ascent()) / 2f);
+
+            canvas.drawText(msg, cx, cy, paintMessage);
+
+        }
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if(this.campoMinado.isLose())   return false;
-        if(this.campoMinado.isWin())    return false;
+        if(this.campoMinado.isLose() || this.campoMinado.isWin()){
+            invalidate();
+            return false;
+        }
 
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:

@@ -5,7 +5,6 @@ public class CampoMinado {
     private static final int NUM_LINHAS = 10, NUM_COLUNAS = 10;
     private final Cell[][] listCell = new Cell[NUM_LINHAS][NUM_COLUNAS]; // Tabuleiro do Campo Minado
 //    private final Map<Integer, Cell> cellMap = new HashMap<>(); //Mapeia as Celular por ID
-    private int countCellNoBomb = 0;
     private boolean mark, win, lose;
 
     public CampoMinado() {
@@ -16,37 +15,42 @@ public class CampoMinado {
         this.mark = false;
         this.win = false;
         this.lose = false;
-        int id = 0;
+        int id = 0,  countCellNoBomb = 0;
         for (int row = 0; row < totalRow(); row++) {
             for (int col = 0; col < totalColumn(); col++) {
                 listCell[row][col] = new Cell(id, row, col, generateBombRandow());
-                countCellNoBomb = listCell[row][col].isHasBomb() ? countCellNoBomb : (countCellNoBomb+1);
+                countCellNoBomb = listCell[row][col].isHasBomb() ? (countCellNoBomb + 1) : (countCellNoBomb);
                 id++;
             }
+        }
+
+        int sizeBoard = NUM_COLUNAS * NUM_LINHAS;
+        int sizeMin = (int)(sizeBoard * 0.05) + 1;
+        int sizeMax = (int)(sizeBoard * 0.45);
+
+        if(countCellNoBomb < sizeMin || countCellNoBomb > sizeMax){
+            reset();
         }
     }
 
     public boolean isLose() {
-        return lose;
+        return this.lose;
     }
 
     public boolean isWin() {
-        return win;
+        return this.win;
     }
 
-    private void endGameWin(){
-        int count = 0;
-        for(int row = 0; row < totalRow(); row++){
-            for(int col = 0; col <totalColumn(); col++) {
-                if(getCellByCoords(row, col).isOpen() && !getCellByCoords(row, col).isHasBomb()) count++;
+    private void endGameWin() {
+        for (int row = 0; row < totalRow(); row++) {
+            for (int col = 0; col < totalColumn(); col++) {
+                if (!getCellByCoords(row, col).isOpen() && !getCellByCoords(row, col).isHasBomb())
+                    return;
             }
         }
-
-        if(this.countCellNoBomb == count){
-            //Vitoria
-            this.win = true;
-        }
+        this.win = true; // vitória
     }
+
 
     private void endGameLose(){
         for(int row = 0; row < totalRow(); row++){
@@ -54,9 +58,7 @@ public class CampoMinado {
                 if(getCellByCoords(row, col).isHasBomb()) getCellByCoords(row, col).setOpen();
             }
         }
-
-        this.lose = true;
-        //DERROTA
+        this.lose = true; //DERROTA
     }
 
     public void openCell(int row, int col){
@@ -70,6 +72,7 @@ public class CampoMinado {
 
 //        this.countCellNoBomb--;
 //        if(this.countCellNoBomb <= 0) endGameWin();
+        endGameWin();
 
         if(cell.isHasBomb()) {
             endGameLose();
@@ -94,7 +97,6 @@ public class CampoMinado {
                 }
             }
         }
-        endGameWin();
     }
 
     private int countBombsAround(int row, int col){
