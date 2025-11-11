@@ -44,6 +44,10 @@ public class MainActivity extends AppCompatActivity {
         boardView.setMark();
     }
 
+    public void onClickDifficulty(View v){
+        boardView.setDifficulty();
+    }
+
     // Botão para Resetar Game
     public void onClickReset(View v) {
         boardView.resetGame();

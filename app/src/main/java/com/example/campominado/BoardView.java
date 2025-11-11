@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 
 public class BoardView extends View {
 
-    private float cellWidth, cellHeight;
+    private float cellWidth, cellHeight, offsetX = 0f, offsetY = 0f;
 
     private CampoMinado campoMinado;
 
@@ -71,6 +71,23 @@ public class BoardView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
+        float cellSizeByWidth = w / (float) CampoMinado.totalColumn();
+        float cellSizeByHeight = h / (float) CampoMinado.totalRow();
+
+        float cellSize = Math.min(cellSizeByWidth, cellSizeByHeight);
+
+        this.cellHeight = cellSize;
+        this.cellWidth = cellSize;
+
+        float boardWidth =  cellSize * CampoMinado.totalColumn();
+        float boardHeight =  cellSize * CampoMinado.totalRow();
+
+        this.offsetX = (w - boardWidth) / 2f;
+        this.offsetY = (h - boardHeight) / 2f;
+
+        this.offsetX = (w - boardWidth) / 2f;
+        this.offsetY = (h - boardHeight) / 2f;
+
 //        float height, width;
 //
 //        if(h > w){
@@ -81,8 +98,8 @@ public class BoardView extends View {
 //            width = (float) (h * 0.70);
 //        }
 
-        this.cellWidth =  w / (float)(CampoMinado.totalColumn());
-        this.cellHeight =  h / (float)(CampoMinado.totalRow());
+//        this.cellWidth =  w / (float)(CampoMinado.totalColumn());
+//        this.cellHeight =  h / (float)(CampoMinado.totalRow());
 
         this.paintText.setTextSize((Math.min(this.cellHeight, this.cellWidth) * 0.6f));
         this.paintMessage.setTextSize(Math.min(w, h) * 0.15f);
@@ -99,8 +116,8 @@ public class BoardView extends View {
 
                 Cell cell = this.campoMinado.getCellByCoords(row, col);
 
-                float left = col * this.cellWidth;
-                float top = row * this.cellHeight;
+                float left = offsetX + col * this.cellWidth;
+                float top = offsetY + row * this.cellHeight;
                 float right = left + this.cellWidth;
                 float bottom = top + this.cellHeight;
 
@@ -173,13 +190,16 @@ public class BoardView extends View {
             case MotionEvent.ACTION_DOWN:
                 float x = event.getX(), y = event.getY();
 
-                int row = (int) Math.floor(y / this.cellHeight);
-                int col = (int) Math.floor(x / this.cellWidth);
+                // ignora cliques fora do tabuleiro
+                if (x < offsetX || x > offsetX + CampoMinado.totalColumn() * cellWidth
+                        || y < offsetY || y > offsetY + CampoMinado.totalRow() * cellHeight) {
+                    return true;
+                }
+
+                int row = (int) Math.floor((y - offsetY)  / this.cellHeight);
+                int col = (int) Math.floor((x - offsetX)  / this.cellWidth);
 
                 if(row >= 0 && col >=0 && row < CampoMinado.totalRow() && col < CampoMinado.totalColumn()) {
-//                    Cell cell = this.campoMinado.getCellByCoords(row, col);
-//                    if(cell != null){
-//                        cell.setOpen();
                     if(this.campoMinado.isMark()){
                         this.campoMinado.setCellMark(row, col);
                     }else{
@@ -194,8 +214,13 @@ public class BoardView extends View {
         return super.onTouchEvent(event);
     }
 
+    public void setDifficulty(){
+        this.campoMinado.setDifficulty();
+        invalidate();
+    }
     public void setMark(){
         this.campoMinado.setMark();
+        invalidate();
     }
 
     public void resetGame() {

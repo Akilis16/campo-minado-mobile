@@ -6,8 +6,10 @@ public class CampoMinado {
     private final Cell[][] listCell = new Cell[NUM_LINHAS][NUM_COLUNAS]; // Tabuleiro do Campo Minado
 //    private final Map<Integer, Cell> cellMap = new HashMap<>(); //Mapeia as Celular por ID
     private boolean mark, win, lose;
+    private int difficulty;
 
     public CampoMinado() {
+        this.difficulty = 1;
         reset();// inicializa tabuleiro
     }
 
@@ -15,21 +17,55 @@ public class CampoMinado {
         this.mark = false;
         this.win = false;
         this.lose = false;
-        int id = 0,  countCellNoBomb = 0;
+        int id = 0,  countCellNotBomb = 0;
         for (int row = 0; row < totalRow(); row++) {
             for (int col = 0; col < totalColumn(); col++) {
                 listCell[row][col] = new Cell(id, row, col, generateBombRandow());
-                countCellNoBomb = listCell[row][col].isHasBomb() ? (countCellNoBomb + 1) : (countCellNoBomb);
+                countCellNotBomb = listCell[row][col].isHasBomb() ? (countCellNotBomb + 1) : (countCellNotBomb);
                 id++;
             }
         }
 
-        int sizeBoard = NUM_COLUNAS * NUM_LINHAS;
-        int sizeMin = (int)(sizeBoard * 0.05) + 1;
-        int sizeMax = (int)(sizeBoard * 0.45);
+        accountBombs(countCellNotBomb);
 
-        if(countCellNoBomb < sizeMin || countCellNoBomb > sizeMax){
+    }
+
+    private void accountBombs(int countCellNotBomb){
+        int sizeBoard = NUM_COLUNAS * NUM_LINHAS;
+
+        int sizeMin = 0;
+        int sizeMax = 0;
+
+        switch (this.difficulty){
+            case 1:
+                sizeMin = (int)(sizeBoard * 0.05);
+                sizeMax = (int)(sizeBoard * 0.10);
+                break;
+            case 2:
+                sizeMin = (int)(sizeBoard * 0.20);
+                sizeMax = (int)(sizeBoard * 0.30);
+                break;
+            case 3:
+                sizeMin = (int)(sizeBoard * 0.30);
+                sizeMax = (int)(sizeBoard * 0.50);
+                break;
+        }
+
+        if(countCellNotBomb < sizeMin || countCellNotBomb > sizeMax){
             reset();
+        }
+
+    }
+
+    public int getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty() {
+        this.difficulty++;
+
+        if(this.difficulty > 3){
+            this.difficulty = 1;
         }
     }
 
@@ -136,7 +172,8 @@ public class CampoMinado {
     }
 
     private boolean generateBombRandow(){   // Gera aleatoriamente a bomba
-        return Math.random() < 0.05;
+        float lucky = (float) (this.difficulty == 1 ? 0.10 : this.difficulty == 2 ? 0.30 : 0.50);
+        return Math.random() < lucky;
     }
 
     public static int totalRow(){       // Retorna total de linhas
