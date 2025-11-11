@@ -15,7 +15,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 
 public class BoardView extends View {
 
-    private float cellWidth, cellHeight, offsetX = 0f, offsetY = 0f;
+    private float cellSize, offsetX = 0f, offsetY = 0f;//cellWidth, cellHeight
 
     private CampoMinado campoMinado;
     private Drawable bombDrawable;
@@ -80,21 +80,22 @@ public class BoardView extends View {
         float cellSizeByWidth = w / (float) CampoMinado.totalColumn();
         float cellSizeByHeight = h / (float) CampoMinado.totalRow();
 
-        float cellSize = Math.min(cellSizeByWidth, cellSizeByHeight);
+//        float cellSize = Math.min(cellSizeByWidth, cellSizeByHeight);
+        this.cellSize = Math.min(cellSizeByWidth, cellSizeByHeight);
 
-        this.cellHeight = cellSize;
-        this.cellWidth = cellSize;
+//        this.cellHeight = cellSize;
+//        this.cellWidth = cellSize;
 
-        float boardWidth =  cellSize * CampoMinado.totalColumn();
-        float boardHeight =  cellSize * CampoMinado.totalRow();
-
-        this.offsetX = (w - boardWidth) / 2f;
-        this.offsetY = (h - boardHeight) / 2f;
+        float boardWidth =  this.cellSize * CampoMinado.totalColumn();
+        float boardHeight =  this.cellSize * CampoMinado.totalRow();
 
         this.offsetX = (w - boardWidth) / 2f;
         this.offsetY = (h - boardHeight) / 2f;
 
-        this.paintText.setTextSize((Math.min(this.cellHeight, this.cellWidth) * 0.6f));
+        this.offsetX = (w - boardWidth) / 2f;
+        this.offsetY = (h - boardHeight) / 2f;
+
+        this.paintText.setTextSize(((this.cellSize) * 0.6f));
         this.paintMessage.setTextSize(Math.min(w, h) * 0.15f);
     }
 
@@ -103,21 +104,18 @@ public class BoardView extends View {
         super.onDraw(canvas);
 
         canvas.drawColor(Color.DKGRAY);
-
         for(int row = 0; row < CampoMinado.totalRow(); row++){
             for(int col = 0; col < CampoMinado.totalColumn(); col++){
-
                 Cell cell = this.campoMinado.getCellByCoords(row, col);
 
-                float left = offsetX + col * this.cellWidth;
-                float top = offsetY + row * this.cellHeight;
-                float right = left + this.cellWidth;
-                float bottom = top + this.cellHeight;
+                float left = offsetX + col * this.cellSize;
+                float top = offsetY + row * this.cellSize;
+                float right = left + this.cellSize;
+                float bottom = top + this.cellSize;
 
                 if(cell.isOpen()){
                     if(cell.isHasBomb()){
                         canvas.drawRect(left, top, right, bottom, this.paintBomb);
-
                         designBomb(canvas, left, top, right, bottom);
                     }else{
                         canvas.drawRect(left, top, right, bottom, this.paintOpen);
@@ -131,33 +129,12 @@ public class BoardView extends View {
                 canvas.drawRect(left, top, right, bottom, this.paintGrid);
             }
         }
-
-        if(this.campoMinado.isWin() || this.campoMinado.isLose()){
-
-            Paint paintFundo = new Paint(Paint.ANTI_ALIAS_FLAG);
-            paintFundo.setColor(0xAA000000);
-            canvas.drawRect(0, 0,getWidth(), getHeight(), paintFundo);
-
-            String msg;
-            if(this.campoMinado.isWin()){
-                paintMessage.setColor(Color.CYAN);    // cor da mensagem
-                msg = "YOU WIN!";
-            } else {
-                paintMessage.setColor(Color.RED);
-                msg = "YOU LOSE!";
-            }
-
-            float cx = getWidth() / 2f;
-            float cy = getHeight() / 2f - ((paintMessage.descent() + paintMessage.ascent()) / 2f);
-
-            canvas.drawText(msg, cx, cy, paintMessage);
-
-        }
+        designEndGame(canvas);
     }
 
     private void designBomb(Canvas canvas, float left, float top, float right, float bottom){
         if(bombDrawable != null){
-            float cellW = this.cellWidth, cellH = this.cellHeight;
+            float cellW = this.cellSize, cellH = this.cellSize;
             int bombW = bombDrawable.getIntrinsicWidth(), bombH = bombDrawable.getIntrinsicHeight();
             int imgL, imgR, imgT, imgB;
 
@@ -186,8 +163,8 @@ public class BoardView extends View {
 
     private void designText(Canvas canvas, float left, float top, int row, int col){
         if(this.campoMinado.getCellByCoords(row, col).getBombsAround() != 0) {
-            float centerX = left + this.cellWidth / 2f;
-            float centerY = top + this.cellHeight / 2f - ((paintText.descent() + paintText.ascent()) / 2f);
+            float centerX = left + this.cellSize / 2f;
+            float centerY = top + this.cellSize / 2f - ((paintText.descent() + paintText.ascent()) / 2f);
 
             canvas.drawText(
                     String.valueOf(this.campoMinado.getCellByCoords(row, col).getBombsAround()),
@@ -195,6 +172,28 @@ public class BoardView extends View {
                     centerY,
                     this.paintText
             );
+        }
+    }
+
+    private void designEndGame(Canvas canvas){
+        if(this.campoMinado.isWin() || this.campoMinado.isLose()){
+            Paint paintFundo = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paintFundo.setColor(0xAA000000);
+            canvas.drawRect(0, 0,getWidth(), getHeight(), paintFundo);
+
+            String msg;
+            if(this.campoMinado.isWin()){
+                paintMessage.setColor(Color.CYAN);    // cor da mensagem
+                msg = "YOU WIN!";
+            } else {
+                paintMessage.setColor(Color.RED);
+                msg = "YOU LOSE!";
+            }
+
+            float cx = getWidth() / 2f;
+            float cy = getHeight() / 2f - ((paintMessage.descent() + paintMessage.ascent()) / 2f);
+
+            canvas.drawText(msg, cx, cy, paintMessage);
         }
     }
 
@@ -210,13 +209,13 @@ public class BoardView extends View {
                 float x = event.getX(), y = event.getY();
 
                 // ignora cliques fora do tabuleiro
-                if (x < offsetX || x > offsetX + CampoMinado.totalColumn() * cellWidth
-                        || y < offsetY || y > offsetY + CampoMinado.totalRow() * cellHeight) {
+                if (x < offsetX || x > offsetX + CampoMinado.totalColumn() * this.cellSize
+                        || y < offsetY || y > offsetY + CampoMinado.totalRow() * this.cellSize) {
                     return true;
                 }
 
-                int row = (int) Math.floor((y - offsetY)  / this.cellHeight);
-                int col = (int) Math.floor((x - offsetX)  / this.cellWidth);
+                int row = (int) Math.floor((y - offsetY)  / this.cellSize);
+                int col = (int) Math.floor((x - offsetX)  / this.cellSize);
 
                 if(row >= 0 && col >=0 && row < CampoMinado.totalRow() && col < CampoMinado.totalColumn()) {
                     if(this.campoMinado.isMark()){
