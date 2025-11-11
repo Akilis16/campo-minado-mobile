@@ -49,6 +49,7 @@ public class BoardView extends View {
         this.paintGrid.setStyle(Paint.Style.STROKE);
 
         this.paintClose.setColor(Color.parseColor("#C0B5B4"));
+        this.paintMark.setColor(Color.BLUE);
         this.paintOpen.setColor(Color.parseColor("#FFC107"));
         this.paintBomb.setColor(Color.parseColor("#FF0000"));
         this.paintText.setColor(Color.BLACK);
@@ -100,6 +101,8 @@ public class BoardView extends View {
                     }else{
                         canvas.drawRect(left, top, right, bottom, this.paintOpen);
                     }
+                } else if(cell.isMark()) {
+                    canvas.drawRect(left, top, right, bottom, this.paintMark);
                 } else {
                     canvas.drawRect(left, top, right, bottom, this.paintClose);
                 }
@@ -140,7 +143,11 @@ public class BoardView extends View {
 //                    Cell cell = this.campoMinado.getCellByCoords(row, col);
 //                    if(cell != null){
 //                        cell.setOpen();
-                    this.campoMinado.openCell(row, col);
+                    if(this.campoMinado.isMark()){
+                        this.campoMinado.setCellMark(row, col);
+                    }else{
+                        this.campoMinado.openCell(row, col);
+                    }
                     invalidate();
 //                }
                 }
@@ -148,6 +155,10 @@ public class BoardView extends View {
         }
 
         return super.onTouchEvent(event);
+    }
+
+    public void setMark(){
+        this.campoMinado.setMark();
     }
 
     public void resetGame() {
