@@ -19,7 +19,7 @@ public class BoardView extends View {
     private float cellSize, offsetX = 0f, offsetY = 0f;//cellWidth, cellHeight
 
     private CampoMinado campoMinado;
-    private Drawable bombDrawable;
+    private Drawable bombDrawable, markDrawable;
     private SoundPool soundPool;
     private int bombSoundId;
 
@@ -54,14 +54,15 @@ public class BoardView extends View {
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .build();
 
-        soundPool = new SoundPool.Builder()
+        this.soundPool = new SoundPool.Builder()
                 .setMaxStreams(4)
                 .setAudioAttributes(audioAttributes)
                 .build();
 
-        bombSoundId = soundPool.load(getContext(), R.raw.audio_bomba, 1);
+        this.bombSoundId = this.soundPool.load(getContext(), R.raw.audio_bomba, 1);
 
         this.bombDrawable = AppCompatResources.getDrawable(getContext(), R.drawable.bomba_sem_fundo);
+        this.markDrawable = AppCompatResources.getDrawable(getContext(), R.drawable.marcador_sem_fundo);
 
         this.paintClose.setStyle(Paint.Style.FILL);
         this.paintMark.setStyle(Paint.Style.FILL);
@@ -126,13 +127,14 @@ public class BoardView extends View {
                 if(cell.isOpen()){
                     if(cell.isHasBomb()){
                         canvas.drawRect(left, top, right, bottom, this.paintBomb);
-                        designBomb(canvas, left, top, right, bottom);
+                        designImageInCell(this.bombDrawable, canvas, left, top, right, bottom);
                         playSoundBomb();
                     }else{
                         canvas.drawRect(left, top, right, bottom, this.paintOpen);
                     }
                 } else if(cell.isMark()) {
                     canvas.drawRect(left, top, right, bottom, this.paintMark);
+                    designImageInCell(this.markDrawable, canvas, left, top, right, bottom);
                 } else {
                     canvas.drawRect(left, top, right, bottom, this.paintClose);
                 }
@@ -143,10 +145,10 @@ public class BoardView extends View {
         designEndGame(canvas);
     }
 
-    private void designBomb(Canvas canvas, float left, float top, float right, float bottom){
-        if(bombDrawable != null){
+    private void designImageInCell(Drawable drawable,Canvas canvas, float left, float top, float right, float bottom){
+        if(drawable != null){
             float cellW = this.cellSize, cellH = this.cellSize;
-            int bombW = bombDrawable.getIntrinsicWidth(), bombH = bombDrawable.getIntrinsicHeight();
+            int bombW = drawable.getIntrinsicWidth(), bombH = drawable.getIntrinsicHeight();
             int imgL, imgR, imgT, imgB;
 
             if(bombH > 0 && bombW > 0) {
@@ -166,8 +168,8 @@ public class BoardView extends View {
                 imgB = (int) bottom;
             }
 
-            bombDrawable.setBounds(imgL, imgT, imgR, imgB);
-            bombDrawable.draw(canvas);
+            drawable.setBounds(imgL, imgT, imgR, imgB);
+            drawable.draw(canvas);
         }
     }
 
