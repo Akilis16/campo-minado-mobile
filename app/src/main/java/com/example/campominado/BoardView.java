@@ -127,17 +127,7 @@ public class BoardView extends View {
                     if(cell.isHasBomb()){
                         canvas.drawRect(left, top, right, bottom, this.paintBomb);
                         designBomb(canvas, left, top, right, bottom);
-
-                        if (soundPool != null && bombSoundId != 0) {
-                            soundPool.play(
-                                    bombSoundId,
-                                    1.0f,
-                                    1.0f,
-                                    1,
-                                    0,
-                                    1.0f
-                            );
-                        }
+                        playSoundBomb();
                     }else{
                         canvas.drawRect(left, top, right, bottom, this.paintOpen);
                     }
@@ -191,6 +181,19 @@ public class BoardView extends View {
                     centerX,
                     centerY,
                     this.paintText
+            );
+        }
+    }
+
+    private void playSoundBomb(){
+        if (soundPool != null && bombSoundId != 0) {
+            soundPool.play(
+                    bombSoundId,
+                    1.0f,
+                    1.0f,
+                    1,
+                    0,
+                    1.0f
             );
         }
     }
