@@ -4,8 +4,9 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.media.AudioAttributes;
+import android.media.SoundPool;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +20,8 @@ public class BoardView extends View {
 
     private CampoMinado campoMinado;
     private Drawable bombDrawable;
+    private SoundPool soundPool;
+    private int bombSoundId;
 
     private final Paint
             paintOpen = new Paint(Paint.ANTI_ALIAS_FLAG),
@@ -46,6 +49,18 @@ public class BoardView extends View {
     private void inicializador(){
         this.campoMinado = new CampoMinado();
 
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
+
+        soundPool = new SoundPool.Builder()
+                .setMaxStreams(4)
+                .setAudioAttributes(audioAttributes)
+                .build();
+
+        bombSoundId = soundPool.load(getContext(), R.raw.audio_bomba, 1);
+
         this.bombDrawable = AppCompatResources.getDrawable(getContext(), R.drawable.bomba_sem_fundo);
 
         this.paintClose.setStyle(Paint.Style.FILL);
@@ -62,7 +77,7 @@ public class BoardView extends View {
         this.paintText.setColor(Color.BLACK);
 
         this.paintText.setTextAlign(Paint.Align.CENTER);
-        this.paintGrid.setStrokeWidth(8.4f);
+        this.paintGrid.setStrokeWidth(20f);
         this.paintGrid.setColor(Color.WHITE);
 
         paintMessage.setAntiAlias(true);
@@ -70,7 +85,6 @@ public class BoardView extends View {
         paintMessage.setTextSize(64f);                // ajusta depois se quiser maior/menor
         paintMessage.setFakeBoldText(true);
         paintMessage.setShadowLayer(8f, 0f, 0f, Color.BLACK);
-
     }
 
     @Override
@@ -80,11 +94,7 @@ public class BoardView extends View {
         float cellSizeByWidth = w / (float) CampoMinado.totalColumn();
         float cellSizeByHeight = h / (float) CampoMinado.totalRow();
 
-//        float cellSize = Math.min(cellSizeByWidth, cellSizeByHeight);
         this.cellSize = Math.min(cellSizeByWidth, cellSizeByHeight);
-
-//        this.cellHeight = cellSize;
-//        this.cellWidth = cellSize;
 
         float boardWidth =  this.cellSize * CampoMinado.totalColumn();
         float boardHeight =  this.cellSize * CampoMinado.totalRow();
@@ -117,6 +127,17 @@ public class BoardView extends View {
                     if(cell.isHasBomb()){
                         canvas.drawRect(left, top, right, bottom, this.paintBomb);
                         designBomb(canvas, left, top, right, bottom);
+
+                        if (soundPool != null && bombSoundId != 0) {
+                            soundPool.play(
+                                    bombSoundId,
+                                    1.0f,
+                                    1.0f,
+                                    1,
+                                    0,
+                                    1.0f
+                            );
+                        }
                     }else{
                         canvas.drawRect(left, top, right, bottom, this.paintOpen);
                     }
@@ -141,7 +162,6 @@ public class BoardView extends View {
             if(bombH > 0 && bombW > 0) {
                 float scale = 0.9f * Math.min(cellW / bombW, cellH / bombH);
 
-//                                float scaleW = (cellW / bombW) * 0.8F, scaleH = (cellH / bombH) * 0.8F;
                 float drawW = bombW * scale, drawH = bombH * scale;
                 float cx = (left + right) / 2F, cy = (top + bottom) / 2F;
 
