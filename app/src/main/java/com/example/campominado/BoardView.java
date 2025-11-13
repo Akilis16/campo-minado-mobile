@@ -114,7 +114,8 @@ public class BoardView extends View {
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
 
-        canvas.drawColor(Color.DKGRAY);
+//        canvas.drawColor(Color.DKGRAY);
+        canvas.drawColor(Color.parseColor("#DBD4D1"));
         for(int row = 0; row < CampoMinado.totalRow(); row++){
             for(int col = 0; col < CampoMinado.totalColumn(); col++){
                 Cell cell = this.campoMinado.getCellByCoords(row, col);
