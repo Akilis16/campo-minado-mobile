@@ -18,12 +18,20 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#27000000"
-        android:padding="15dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:autoSizeTextType="uniform"
+        android:background="#00000000"
+        android:fontFamily="@font/jersey_10"
+        android:padding="5dp"
         android:text="Campo Minado"
+        android:textAlignment="center"
         android:textColor="#FFC107"
+        android:shadowColor="#CC000000"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="10"
+        android:letterSpacing="0.05"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
@@ -82,9 +90,8 @@
             app:srcCompat="@drawable/difficulty_level"
             android:scaleType="centerInside"
             android:adjustViewBounds="true"
-
-            android:onClick="onClickDifficulty"
-            app:rippleColor="#FFC107" />
+            android:contentDescription="DIFFICULTY"
+            android:onClick="onClickDifficulty"/>
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btn_marcador"
@@ -94,16 +101,13 @@
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
 
+            android:background="@drawable/mark_background"
             app:srcCompat="@drawable/marcador_sem_fundo"
-            android:textColor="#FFC107"
             android:scaleType="centerInside"
             android:adjustViewBounds="true"
             android:padding="8dp"
-            android:background="@drawable/mark_background"
-
-            android:onClick="onClickMark"
-            app:cornerRadius="10dp"
-            app:rippleColor="#FFC107" />
+            android:contentDescription="MARK"
+            android:onClick="onClickMark" />
 
         <Button
             android:id="@+id/btn_reset"
