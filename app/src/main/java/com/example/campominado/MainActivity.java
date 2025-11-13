@@ -12,6 +12,7 @@ import android.widget.TableRow;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     private BoardView boardView;
+    private AppCompatImageButton btnMarcador, btnDificuldade;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,18 +36,23 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        btnMarcador = findViewById(R.id.btn_marcador);
+        btnDificuldade = findViewById(R.id.btn_dificuldade);
 
         boardView = findViewById(R.id.board_view);
-
+        btnMarcador.setSelected(boardView.isMark());
+        btnDificuldade.setImageLevel(boardView.getDifficulty());
     }
 
     //  Botão para Marcar Celula
     public void onClickMark(View v) {
         boardView.setMark();
+        btnMarcador.setSelected(boardView.isMark());
     }
 
     public void onClickDifficulty(View v){
         boardView.setDifficulty();
+        btnDificuldade.setImageLevel(boardView.getDifficulty());
     }
 
     // Botão para Resetar Game

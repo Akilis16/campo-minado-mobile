@@ -25,9 +25,7 @@ public class CampoMinado {
                 id++;
             }
         }
-
         accountBombs(countCellNotBomb);
-
     }
 
     private void accountBombs(int countCellNotBomb){

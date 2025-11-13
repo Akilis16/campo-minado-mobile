@@ -72,7 +72,7 @@ public class BoardView extends View {
         this.paintGrid.setStyle(Paint.Style.STROKE);
 
         this.paintClose.setColor(Color.parseColor("#C0B5B4"));
-        this.paintMark.setColor(Color.BLUE);
+        this.paintMark.setColor(Color.parseColor("#00FFFF"));
         this.paintOpen.setColor(Color.parseColor("#FFC107"));
         this.paintBomb.setColor(Color.parseColor("#FF0000"));
         this.paintText.setColor(Color.BLACK);
@@ -153,7 +153,6 @@ public class BoardView extends View {
 
             if(bombH > 0 && bombW > 0) {
                 float scale = 0.9f * Math.min(cellW / bombW, cellH / bombH);
-
                 float drawW = bombW * scale, drawH = bombH * scale;
                 float cx = (left + right) / 2F, cy = (top + bottom) / 2F;
 
@@ -187,19 +186,6 @@ public class BoardView extends View {
         }
     }
 
-    private void playSoundBomb(){
-        if (soundPool != null && bombSoundId != 0) {
-            soundPool.play(
-                    bombSoundId,
-                    1.0f,
-                    1.0f,
-                    1,
-                    0,
-                    1.0f
-            );
-        }
-    }
-
     private void designEndGame(Canvas canvas){
         if(this.campoMinado.isWin() || this.campoMinado.isLose()){
             Paint paintFundo = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -219,6 +205,19 @@ public class BoardView extends View {
             float cy = getHeight() / 2f - ((paintMessage.descent() + paintMessage.ascent()) / 2f);
 
             canvas.drawText(msg, cx, cy, paintMessage);
+        }
+    }
+
+    private void playSoundBomb(){
+        if (soundPool != null && bombSoundId != 0) {
+            soundPool.play(
+                    bombSoundId,
+                    1.0f,
+                    1.0f,
+                    1,
+                    0,
+                    1.0f
+            );
         }
     }
 
@@ -249,12 +248,15 @@ public class BoardView extends View {
                         this.campoMinado.openCell(row, col);
                     }
                     invalidate();
-//                }
                 }
                 return true;
         }
 
         return super.onTouchEvent(event);
+    }
+
+    public int getDifficulty(){
+        return  this.campoMinado.getDifficulty();
     }
 
     public void setDifficulty(){
@@ -265,6 +267,7 @@ public class BoardView extends View {
         this.campoMinado.setMark();
         invalidate();
     }
+    public boolean isMark() { return this.campoMinado.isMark(); }
 
     public void resetGame() {
         this.campoMinado.reset();
