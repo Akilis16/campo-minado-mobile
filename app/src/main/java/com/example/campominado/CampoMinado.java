@@ -1,6 +1,7 @@
 package com.example.campominado;
 
-public class CampoMinado {
+public class CampoMinado implements java.io.Serializable {
+    private static final long serialVersionUID = 1L;
 
     private static final int NUM_LINHAS = 10, NUM_COLUNAS = 10;
     private final Cell[][] listCell = new Cell[NUM_LINHAS][NUM_COLUNAS]; // Tabuleiro do Campo Minado

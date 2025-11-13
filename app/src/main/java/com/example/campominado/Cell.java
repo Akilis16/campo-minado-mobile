@@ -1,6 +1,7 @@
 package com.example.campominado;
 
-public class Cell {
+public class Cell  implements   java.io.Serializable {
+    private static final long serialVersionUID = 1L;
     private int id, row, column, bombsAround;
     private boolean hasBomb, open, mark;
 

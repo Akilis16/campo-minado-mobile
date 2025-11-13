@@ -191,7 +191,15 @@ public class BoardView extends View {
         if(this.campoMinado.isWin() || this.campoMinado.isLose()){
             Paint paintFundo = new Paint(Paint.ANTI_ALIAS_FLAG);
             paintFundo.setColor(0xAA000000);
-            canvas.drawRect(0, 0,getWidth(), getHeight(), paintFundo);
+
+//            canvas.drawRect(0, 0,getWidth(), getHeight(), paintFundo);
+
+            float left = offsetX;
+            float top = offsetY;
+            float right = offsetX + this.cellSize * CampoMinado.totalColumn();
+            float bottom = offsetY + this.cellSize * CampoMinado.totalColumn();
+
+            canvas.drawRect(left, top, right, bottom, paintFundo);
 
             String msg;
             if(this.campoMinado.isWin()){
@@ -202,8 +210,8 @@ public class BoardView extends View {
                 msg = "YOU LOSE!";
             }
 
-            float cx = getWidth() / 2f;
-            float cy = getHeight() / 2f - ((paintMessage.descent() + paintMessage.ascent()) / 2f);
+            float cx = (left + right) / 2f;
+            float cy = (top + bottom) / 2f - ((paintMessage.descent() + paintMessage.ascent()) / 2f);
 
             canvas.drawText(msg, cx, cy, paintMessage);
         }
@@ -273,5 +281,13 @@ public class BoardView extends View {
     public void resetGame() {
         this.campoMinado.reset();
         invalidate(); // redesenha o tabuleiro
+    }
+
+    public CampoMinado getGame() {
+        return this.campoMinado;
+    }
+    public void setGame(CampoMinado game) {
+        this.campoMinado = game;
+        invalidate();
     }
 }

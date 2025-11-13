@@ -11,6 +11,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.core.content.res.ResourcesCompat;
@@ -36,12 +37,26 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         btnMarcador = findViewById(R.id.btn_marcador);
         btnDificuldade = findViewById(R.id.btn_dificuldade);
-
         boardView = findViewById(R.id.board_view);
+
+        if (savedInstanceState != null) {
+            CampoMinado salvo = (CampoMinado) savedInstanceState.getSerializable("game_state");
+            if (salvo != null) {
+                boardView.setGame(salvo);
+            }
+        }
+
         btnMarcador.setSelected(boardView.isMark());
         btnDificuldade.setImageLevel(boardView.getDifficulty());
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("game_state", boardView.getGame());
     }
 
     //  Botão para Marcar Celula
